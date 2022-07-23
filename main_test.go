@@ -3,26 +3,51 @@ package main
 import "testing"
 
 var tests = []struct {
-	name string
+	name     string
 	dividend float32
-	divsior float32
+	divsior  float32
 	expected float32
-	isErrn bool
+	isErr    bool
+}{
+
+	{"valid-data", 100.0, 10.0, 10.0, false},
+	{"invalid-data", 100.0, 0.0, 0.0, true},
+	{"expect-5", 50.0, 10.0, 5.0, false},
+	{"expect-fraction", -1.0, -777.0, 0.0012870013, false},
 }
 
-{"valid-data", 100.0, 10.0, 10.0, false}
-{"invalid-data", 100.0, 0.0, 0.0, true}
+func TestDivision(t *testing.T) {
+	for _, tt := range tests {
+		got, err := divide(tt.dividend, tt.divsior)
+		if tt.isErr {
+			if err == nil {
+				t.Error("expected an error but did not get one")
+			}
+		} else {
+			if err != nil {
+				t.Error("did not expect an error but got one", err.Error())
+			}
+		}
 
-func TestDivide(t *testing.T) {
-	_, err := divide(10.0, 1.0)
-	if err != nil {
-		t.Error("Got an error when we should not have")
+		if got != tt.expected {
+			t.Errorf("expect %f but got %f", tt.expected, got)
+		}
 	}
 
 }
-func TestBadDivide(t *testing.T) {
-	_, err := divide(10.0, 0)
-	if err == nil {
-		t.Error("Did not get an error when we should have")
-	}
-}
+
+// func TestDivide(t *testing.T) {
+// 	_, err := divide(10.0, 1.0)
+// 	if err != nil {
+// 		t.Error("Got an error when we should not have")
+// 	}
+
+// }
+// func TestBadDivide(t *testing.T) {
+// 	_, err := divide(10.0, 0)
+// 	if err == nil {
+// 		t.Error("Did not get an error when we should have")
+// 	}
+// }
+
+// go test -coverprofile=coverage.out && go tool cover -html=coverage.out
